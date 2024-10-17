@@ -1,4 +1,4 @@
-# Threat Modeling Tool Single Page App (SPA)
+# Threat Modeling Tool App
 
 Built on top of the Threat Composer Tool by Amazon (<https://awslabs.github.io/threat-composer/workspaces/default/dashboard>)
 
