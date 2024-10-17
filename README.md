@@ -4,7 +4,7 @@ Built on top of the Threat Composer Tool by Amazon (<https://awslabs.github.io/t
 
 Repo used to deploy the app into AWS whether it's AWS ECS or EKS etc.
 
-## Task
+## Task/Assignment
 
 - Your task will be to create a Dockerfile for it, push it to ECR.
 
