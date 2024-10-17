@@ -1,10 +1,20 @@
 # Threat Modeling Tool Single Page App (SPA)
 
 Built on top of the Threat Composer Tool by Amazon (<https://awslabs.github.io/threat-composer/workspaces/default/dashboard>)
-This version consolidates the 2 original projects (threat-composer & threat-composer-app)  into a single project and removes the 3rd project entirely (threat-composer-infra) as we will be using a different deployment topology.
-It also adds a new dependency @projectstorm/react-diagrams, for further development of a DFD builder.
 
-## Setup
+Repo used to deploy the app into AWS whether it's AWS ECS or EKS etc.
+
+## Task
+
+- Your task will be to create a Dockerfile for it, push it to ECR.
+
+- Deploy the app on ECS using Terraform.
+
+- Make sure the app is live on `tm.<your-domain>` or `tm.labs.<your-domain>`
+
+- App must use HTTPS. Hosted on ECS. Figure out the rest.
+
+## Local app setup
 
 ```bash
 yarn install
