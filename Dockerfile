@@ -11,7 +11,7 @@ COPY . .
 RUN yarn build 
 
 # Stage 2: Production Stage
-FROM node:18-alpine xw
+FROM node:18-alpine
 
 WORKDIR /app
 
