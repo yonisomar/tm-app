@@ -14,9 +14,9 @@ on:
         default: "latest"
         type: string
       ecr_repository:
-        description: "ECR repository URI"
+        description: "ECR repository name"
         required: true
-        default: "654654595460.dkr.ecr.us-east-1.amazonaws.com/tm-app"
+        default: "tm-app"
         type: string
       aws_region:
         description: "AWS region for ECR"
@@ -77,10 +77,8 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: my-ecr-repo
+          REPOSITORY: ${{ github.event.inputs.ecr_repository }}
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
           echo "Building Docker image for arm64 architecture..."
-          echo $REGISTRY
-          echo $REPOSITORY
-          echo $IMAGE_TAG
+          docker buildx build --platform linux/arm64 -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --push .
