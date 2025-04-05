@@ -9,8 +9,8 @@ on:
         default: "no"
         type: choice
         options:
-          - yes
-          - no
+          - 'yes'
+          - 'no'
       image_tag:
         description: "Tag for the Docker image"
         required: true
