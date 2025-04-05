@@ -1,0 +1,51 @@
+name: Build and Push Image to ECR
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: "Type 'yes' to confirm the build and push"
+        required: true
+        default: "no"
+        type: string
+      image_tag:
+        description: "Tag for the Docker image"
+        required: true
+        default: "latest"
+        type: string
+      ecr_repository:
+        description: "ECR repository URI"
+        required: true
+        default: "654654595460.dkr.ecr.us-east-1.amazonaws.com/tm-app"
+        type: string
+      aws_region:
+        description: "AWS region for ECR"
+        required: true
+        default: "us-west-2"
+        type: choice
+        options:
+          - us-east-1
+          - us-east-2
+          - us-west-1
+          - us-west-2
+          - ap-south-1
+          - ap-northeast-3
+          - ap-northeast-2
+          - ap-southeast-1
+          - ap-southeast-2
+          - ap-northeast-1
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - eu-west-3
+          - eu-north-1
+          - sa-east-1
+
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
