@@ -96,4 +96,4 @@ jobs:
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
           echo "Building Docker image for arm64 architecture..."
-          docker buildx build --platform linux/arm64 -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --push .
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --push .
