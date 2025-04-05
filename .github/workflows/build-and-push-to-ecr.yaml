@@ -81,12 +81,17 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # Step 7: Build, tag, and push Docker image for arm64
+      # Step 7: Build, tag, and push Docker image for arm64 and amd64
       - name: Build, tag, and push Docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ github.event.inputs.ecr_repository }}
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
-          echo "Building Docker image for arm64 architecture..."
-          docker buildx build --platform linux/arm64 -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --push .
+          echo "Building Docker images for arm64 and amd64 architectures..."
+          docker buildx build \
+            --platform linux/arm64,linux/amd64 \
+            -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
+            -t $REGISTRY/$REPOSITORY:$IMAGE_TAG-arm64 \
+            -t $REGISTRY/$REPOSITORY:$IMAGE_TAG-amd64 \
+            --push .
