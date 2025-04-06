@@ -1,4 +1,4 @@
-name: Build and Push Image to ECR
+name: Build, Test, and Push Image to ECR
 
 on:
   workflow_dispatch:
@@ -46,7 +46,7 @@ on:
           - sa-east-1
 
 jobs:
-  build-and-push:
+  build-test-and-push:
     runs-on: ubuntu-latest
     steps:
       # Step 1: Check confirmation input
@@ -81,15 +81,43 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # Step 7: Build, tag, and push Docker image for arm64 and amd64
-      - name: Build, tag, and push Docker image to Amazon ECR
+      # Step 7: Build Docker image for arm64
+      - name: Build Docker image for arm64
+        id: build-image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ github.event.inputs.ecr_repository }}
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
-          echo "Building Docker images for arm64 and amd64 architectures..."
+          echo "Building Docker image for arm64 architecture..."
           docker buildx build \
-            --platform linux/arm64,linux/amd64 \
+            --platform linux/arm64 \
+            -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
+            --load .
+
+      # Step 8: Run Trivy scan on the Docker image
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@v0.11.0
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ github.event.inputs.ecr_repository }}
+          IMAGE_TAG: ${{ github.event.inputs.image_tag }}
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          format: table
+
+      # Step 9: Push Docker image to Amazon ECR
+      - name: Push Docker image to Amazon ECR
+        if: success() # Only push if Trivy scan passes
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ github.event.inputs.ecr_repository }}
+          IMAGE_TAG: ${{ github.event.inputs.image_tag }}
+        run: |
+          echo "Pushing Docker image to Amazon ECR..."
+          docker buildx build \
+            --platform linux/arm64 \
             -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
             --push .
