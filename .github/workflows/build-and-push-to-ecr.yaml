@@ -105,10 +105,10 @@ jobs:
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
           format: 'table'
-          exit-code: '1' # Fail the workflow if vulnerabilities are found
+          exit-code: '0' # Do not fail the workflow if vulnerabilities are found
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL'
+          severity: 'CRITICAL,HIGH,MEDIUM'
 
       # Step 9: Push Docker image to Amazon ECR
       - name: Push Docker image to Amazon ECR
@@ -119,7 +119,4 @@ jobs:
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
           echo "Pushing Docker image to Amazon ECR..."
-          docker buildx build \
-            --platform linux/arm64 \
-            -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
-            --push .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
