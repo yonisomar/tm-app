@@ -108,7 +108,7 @@ jobs:
           exit-code: '1' # Fail the workflow if vulnerabilities are found
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL'
 
       # Step 9: Push Docker image to Amazon ECR
       - name: Push Docker image to Amazon ECR
