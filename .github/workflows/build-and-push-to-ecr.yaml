@@ -49,26 +49,21 @@ jobs:
   build-test-and-push:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Check confirmation input
       - name: Check confirmation input
         if: ${{ github.event.inputs.confirmation != 'yes' }}
         run: |
           echo "Confirmation input is not 'yes'. Exiting."
           exit 1
 
-      # Step 2: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 3: Set up QEMU for multi-platform builds
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      # Step 4: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 5: Configure AWS Credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -76,12 +71,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ github.event.inputs.aws_region }}
 
-      # Step 6: Login to Amazon ECR
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # Step 7: Build Docker image for arm64
       - name: Build Docker image for arm64
         id: build-image
         env:
@@ -95,7 +88,6 @@ jobs:
             -t $REGISTRY/$REPOSITORY:$IMAGE_TAG \
             --load .
 
-      # Step 8: Run Trivy vulnerability scanner
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.28.0
         env:
@@ -104,13 +96,9 @@ jobs:
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
-          format: 'table'
-          exit-code: '0' # Do not fail the workflow if vulnerabilities are found
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH,MEDIUM'
+          exit-code: '1'
+          severity: 'CRITICAL'
 
-      # Step 9: Push Docker image to Amazon ECR
       - name: Push Docker image to Amazon ECR
         if: success() # Only push if Trivy scan passes
         env:
