@@ -96,6 +96,7 @@ jobs:
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
+          format: 'table'
           exit-code: '1'
           severity: 'CRITICAL'
 
