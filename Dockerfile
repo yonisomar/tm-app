@@ -11,7 +11,7 @@
 
 
 # Stage 1: Build Stage
-FROM --platform=$BUILDPLATFORM node:18-slim AS build 
+FROM --platform=$BUILDPLATFORM node:18-alpine AS build 
 
 WORKDIR /app
 
@@ -23,7 +23,7 @@ COPY . .
 RUN yarn build 
 
 # Stage 2: Production Stage
-FROM --platform=$BUILDPLATFORM node:18-slim
+FROM --platform=$BUILDPLATFORM node:18-alpine
 
 WORKDIR /app
 
