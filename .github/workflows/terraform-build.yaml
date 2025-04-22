@@ -1,0 +1,145 @@
+name: Terraform Build Manual Trigger
+
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+    inputs:
+      confirmation:
+        description: "Please confirm if you want to proceed with the build and push to ECR. Select 'Yes' to confirm."
+        required: true
+        default: "no"
+        type: choice
+        options:
+          - 'Yes'
+          - 'No'
+
+jobs:
+  pull-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check confirmation input
+        if: ${{ github.event.inputs.confirmation != 'Yes' }}
+        run: |
+          echo "Confirmation input is not 'yes'. Exiting."
+          exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Pull Docker image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: "tm-app"
+          IMAGE_TAG: "latest"
+        run: |
+          echo "Pulling Docker image from ECR..."
+          docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "Docker image pulled successfully."
+          echo "Image details:"
+          docker images $REGISTRY/$REPOSITORY:$IMAGE_TAG
+  
+  terraform-checks:
+    runs-on: ubuntu-latest
+    needs: pull-image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.11.4
+      
+      - name: Terraform Format
+        working-directory: terraform
+        run: |
+          terraform fmt --recursive
+
+      - name: Install & Run Terraform Lint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          tflint --version
+          tflint
+      
+      - name: Install & Run Checkov
+        run: |
+          curl -s https://raw.githubusercontent.com/bridgecrewio/checkov/master/install.sh | bash
+          checkov --version
+          checkov -d terraform/
+
+  terraform-plan:
+    runs-on: ubuntu-latest
+    needs: terraform-checks
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.11.4
+  
+      - name: Terraform Initialize
+        working-directory: terraform
+        run: |
+          terraform init
+        
+      - name: Terraform Validate
+        working-directory: terraform
+        run: |
+          terraform validate
+
+      - name: Terraform Plan
+        working-directory: terraform
+        id: tf-plan
+        run: |
+          terraform plan -out=tf-plan
+          terraform show -no-color tf-plan > tf-plan.txt
+      
+      - name: Upload Plan File
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
+          path: terraform/tfplan
+
+  terraform-apply:
+    runs-on: ubuntu-latest
+    needs: terraform-plan
+    environment: production # Requires manual approval
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download Plan File
+        uses: actions/download-artifact@v3
+        with:
+          name: tfplan
+          path: terraform/
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      - name: Terraform Apply
+        working-directory: terraform
+        run: |
+          terraform apply tfplan
+      
+
+    
+      
+    
+    
+    
+    
