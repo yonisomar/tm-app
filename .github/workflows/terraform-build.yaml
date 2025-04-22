@@ -109,12 +109,6 @@ jobs:
         run: |
           terraform plan -out=tf-plan
           terraform show -no-color tf-plan > tf-plan.txt
-      
-      - name: Upload Plan File
-        uses: actions/upload-artifact@v4
-        with:
-          name: tf-plan
-          path: terraform/tf-plan.txt
 
   terraform-apply:
     runs-on: ubuntu-latest
@@ -128,12 +122,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Download Plan File
-        uses: actions/download-artifact@v4
-        with:
-          name: tf-plan
-          path: terraform/
-
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -143,7 +131,7 @@ jobs:
         working-directory: terraform
         run: |
           terraform init
-          terraform apply -auto-approve tf-plan
+          terraform apply -auto-approve
           echo "Terraform apply completed successfully."
 
 
