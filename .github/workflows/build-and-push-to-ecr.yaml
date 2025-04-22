@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       confirmation:
-        description: "Please confirm if you want to proceed with the build and push to ECR. Select 'yes' to confirm."
+        description: "Please confirm if you want to proceed with the build and push to ECR. Select 'Yes' to confirm."
         required: true
-        default: "no"
+        default: "No"
         type: choice
         options:
-          - 'yes'
-          - 'no'
+          - 'Yes'
+          - 'No'
       image_tag:
         description: "Tag for the Docker image"
         required: false
