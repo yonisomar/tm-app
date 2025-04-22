@@ -107,8 +107,7 @@ jobs:
         working-directory: terraform
         id: tf-plan
         run: |
-          terraform plan -out=tf-plan
-          terraform show -no-color tf-plan > tf-plan.txt
+          terraform plan
 
   terraform-apply:
     runs-on: ubuntu-latest
