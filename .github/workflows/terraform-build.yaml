@@ -139,10 +139,12 @@ jobs:
         with:
           terraform_version: 1.11.4
 
-      - name: Terraform Apply
+      - name: Terraform Init & Apply
         working-directory: terraform
         run: |
-          terraform apply
+          terraform init
+          terraform apply -auto-approve tf-plan
+          echo "Terraform apply completed successfully."
 
 
 
