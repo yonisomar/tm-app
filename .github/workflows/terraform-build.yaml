@@ -142,7 +142,7 @@ jobs:
       - name: Terraform Apply
         working-directory: terraform
         run: |
-          terraform apply tf-plan.txt
+          terraform apply
 
 
 
