@@ -29,9 +29,9 @@ module "ecs" {
   cluster_name         = "tm_ecs_cluster"
   task_family_namee    = "tm_app_task_def"
   task_cpu             = 1024 # total sum of container cpu x desired count
-  task_memory          = 2560 # total sum of container memory x desired count
+  task_memory          = 3072 # total sum of container memory x desired count
   container_cpu        = 1024
-  container_memory     = 2560
+  container_memory     = 3072
   container_name       = "tm-app"
   container_image      = "654654595460.dkr.ecr.us-east-1.amazonaws.com/tm-app:latest"
   container_port       = 3000
