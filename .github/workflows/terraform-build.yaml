@@ -113,8 +113,8 @@ jobs:
       - name: Upload Plan File
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan
-          path: terraform/tfplan
+          name: tf-plan.txt
+          path: terraform/tfplan.txt
 
   terraform-apply:
     runs-on: ubuntu-latest
@@ -131,7 +131,7 @@ jobs:
       - name: Download Plan File
         uses: actions/download-artifact@v4
         with:
-          name: tfplan
+          name: tf-plan.txt
           path: terraform/
 
       - name: Set up Terraform
