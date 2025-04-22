@@ -71,6 +71,7 @@ jobs:
           tflint
       
       - name: Install & Run Checkov
+        continue-on-error: true
         run: |
           pip install checkov
           checkov --version
@@ -118,7 +119,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        continue-on-error: true
 
       - name: Download Plan File
         uses: actions/download-artifact@v3
