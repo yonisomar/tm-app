@@ -72,7 +72,7 @@ jobs:
       
       - name: Install & Run Checkov
         run: |
-          curl -s https://raw.githubusercontent.com/bridgecrewio/checkov/master/install.sh | bash
+          pip install checkov
           checkov --version
           checkov -d terraform/
 
@@ -134,11 +134,11 @@ jobs:
         working-directory: terraform
         run: |
           terraform apply tfplan
-      
 
-    
-      
-    
-    
-    
-    
+
+
+
+
+
+
+
