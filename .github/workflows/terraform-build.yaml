@@ -70,11 +70,12 @@ jobs:
           tflint --version
           tflint
       
-      - name: Install & Run Checkov
-        run: |
-          pip install checkov
-          checkov --version
-          checkov -d terraform/ || true
+      - name: Run Checkov action
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: terraform
+          soft_fail: true
 
   terraform-plan:
     runs-on: ubuntu-latest
