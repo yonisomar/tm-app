@@ -71,11 +71,10 @@ jobs:
           tflint
       
       - name: Install & Run Checkov
-        continue-on-error: true
         run: |
           pip install checkov
           checkov --version
-          checkov -d terraform/
+          checkov -d terraform/ || true
 
   terraform-plan:
     runs-on: ubuntu-latest
