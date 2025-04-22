@@ -1,5 +1,4 @@
-name: Terraform Build Manual Trigger
-
+name: Terraform Build
 on:
   workflow_dispatch: # Allows manual triggering of the workflow
     inputs:
